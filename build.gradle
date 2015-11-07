@@ -1,0 +1,74 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+    }
+}
+
+// Setup required project resources.
+repositories {
+    maven {
+        name = "chickenbones"
+        url = "http://chickenbones.net/maven/"
+    }
+    maven {
+        name "Mobius Repo"
+        url "http://mobiusstrip.eu/maven"
+    }
+    ivy {
+        name "MineTweaker3"
+        artifactPattern "http://minetweaker3.powerofbytes.com/download/[module]-[revision].[ext]"
+    }
+}
+
+apply plugin: 'forge'
+
+version = "1.0"
+group= "com.yourname.modid" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "modid"
+
+minecraft {
+    version = "1.7.10-10.13.4.1448-1.7.10"
+    runDir = "eclipse"
+}
+
+dependencies {
+    // Code Chicken
+    compile "codechicken:CodeChickenLib:1.7.10-1.1.3.136:dev"
+    compile "codechicken:CodeChickenCore:1.7.10-1.0.6.43:dev"
+    compile "codechicken:NotEnoughItems:1.7.10-1.0.4.105:dev"
+
+    // Core
+    compile "mcp.mobius.waila:Waila:1.5.9_1.7.10:dev"
+    compile name: 'MineTweaker3', version: 'Dev-1.7.10-3.0.9C', ext: 'jar'
+}
+
+processResources
+{
+    // this will ensure that this task is redone when the versions change.
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+                
+        // replace version and mcversion
+        expand 'version':project.version, 'mcversion':project.minecraft.version
+    }
+        
+    // copy everything else, thats not the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
